@@ -6,7 +6,7 @@ import cz.vutbr.fit 1.0
 Window {
     visible: true
     width: 400
-    height: 315
+    height: 355
     
     title: "ITU - Qt 5 / QML kalkulačka"
 
@@ -19,6 +19,8 @@ Window {
         ListElement { op: "-"; tog: true; }
         // TODO
         // Rozšiřte model o další dvě základní matematické operace 
+        ListElement { op: "*"; tog: false; }
+        ListElement { op: "/"; tog: false; }
     }
 
     // Prvek pro rozvržení prvků do sloupce
@@ -28,6 +30,8 @@ Window {
 
         // Vstupní hodnota - první operand výpočtu
         Rectangle {
+            // set id:
+            id: inputbox
             height: 35;
             width: 400;
             border.color: "#bbb";
@@ -85,6 +89,14 @@ Window {
 
         }
 
+        // "Vlastní" třída pro posuvník. Definice v MySlider.qml
+        MyLtu {
+            // id: ltu - neni potreba
+            color: Qt.darker(Theme.slider_color)
+
+            text: qsTr( "Lut value:" + lut.getValue(slider.value))
+        }
+
         // TODO
         // vložte nový textový prvek, který bude bude vizuálně 'zapadat'
         // do výsledné aplikace a bude zobrazoval vertikálně vycentrovaný
@@ -96,7 +108,6 @@ Window {
         MyClickButton {
             width: 400;
             btnColor: Theme.btn_colour
-            
             text: qsTr( "Compute" )
             
             function getOperation() {
@@ -111,30 +122,68 @@ Window {
 
             // Obsluha události při zachycení signálu clicked
             onClicked: {
+                // reset colors
+                slider.rectColor = Theme.slider_color;
+                textA.color = "black";
+                result.color = "black";
+                inputbox.color = "#777";
+
+
                 var a = parseFloat(textA.text, 10);
                 // TODO
                 // Zkontrolujte jestli funkce parseFloat vrátila 
                 // korektní výsledek (tj. ne NaN, ale číslo). Pokud 
                 // je hodnota a NaN, změňte barvu vstupního pole
                 // na červenou a vypište chybu do pole pro výsledek
+                if (isNaN(a)) {
+                    inputbox.color = "red";
+                    result.color = "red";
+                    result.text = "Invalid input";
+                    return;
+                }
 
-                
                 // TODO
                 // Upravte načtení hodnoty b tak, aby získal hodnotu b
                 // z LUT (Look Up Table) podle vybrané hodnoty na 'slider'
-                var b = 0; 
+                var b = lut.getValue(slider.value);
 
                 // TODO
                 // pokud se uživatel pokouší dělit nulou, změňte barvu
                 // posuvníku na slideru na červenou a vypište chybu
                 // do pole pro výsledek
-
+x
                 var op = getOperation();
+
+                if (op === "/" && b === 0) {
+                    slider.rectColor = "red";
+                    result.color = "red";
+                    result.text = "Division by zero";
+                    return;
+                }
+
+
                 console.log( a + " "+ op + " " + b + " = ?")
                 
                 // TODO
                 // Vypočítejte výslednou hodnotu danou operandy a, b
                 // a operátorem op, výsledek uložte do prvku result
+                var reslt = 0; // new var
+
+                switch (op) {
+                    case "+":
+                        reslt = a + b;
+                        break;
+                    case "-":
+                        reslt = a - b;
+                        break;
+                    case "*":
+                        reslt = a * b;
+                        break;
+                    case "/":
+                        reslt = a / b;
+                        break;
+                }
+                result.text = "Result: " + reslt;
             }
         }
 

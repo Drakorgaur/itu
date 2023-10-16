@@ -43,5 +43,4 @@ Rectangle {
         verticalAlignment: Text.AlignVCenter
 
     }
-
 }

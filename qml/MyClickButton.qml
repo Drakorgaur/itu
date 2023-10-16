@@ -9,7 +9,7 @@ Rectangle {
     property alias text: txt.text;
 
     // Proměnné, které mají parametr property jsou přístupné zvenčí
-    property color btnColor: "#777777";
+    property color btnColor:  mouse.pressed ? "#777777" : "#0066FF";
     property color textColor: mouse.pressed ? "#0066FF" : "black"
 
     // Definování signálu
@@ -21,7 +21,7 @@ Rectangle {
     // TODO
     // Upravte nastavení hodnoty color tak,
     // aby při stisknutí myši se změnila barva tlačítka
-    color: btnColor
+    color: mouse.pressed ? "#777777" : "#0066FF"
 
 
     // Samotná třída Rectangle nijak nezachytává signály
@@ -48,6 +48,9 @@ Rectangle {
         // Nastavte parametry tohoto prvku tak,
         // aby výsledný text byl zarovnán na střed tlačítka
         // a měl vhodné formátování
+        color: btn.textColor
+        font.pixelSize: 32
+        anchors.centerIn: parent
     }
 
 }
